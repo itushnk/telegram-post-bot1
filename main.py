@@ -89,6 +89,9 @@ def run_scheduled_posts():
         reader = csv.DictReader(csvfile)
         rows = list(reader)
 
+    for row in rows:
+        row['ItemNumber'] = str(row['ItemNumber']).replace('.0', '')
+
     for i, row in enumerate(rows):
         schedule.every(POST_INTERVAL_MINUTES * i).minutes.do(send_post_to_channel, row=row)
 
