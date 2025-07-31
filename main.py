@@ -6,7 +6,7 @@ import schedule
 
 # 🧠 פרטי הבוט והערוץ
 BOT_TOKEN = '8371104768:AAE8GYjVBeF0H4fqOur9tMLe4_D4laCBRsk'
-CHANNEL_ID = '@MyPostBot2025_bot'  # או @שם_הערוץ שלך בפועל
+CHANNEL_ID = '@MyPostBot2025_bot'
 CSV_FILE_PATH = 'products.csv'
 POST_INTERVAL_MINUTES = 20
 
@@ -21,14 +21,14 @@ def generate_post_text(row):
     price_line = f"""מחיר מבצע: [{row['SalePrice']} ש"ח]({row['BuyLink']}) (מחיר מקורי: {row['OriginalPrice']} ש"ח)"""
     discount_line = f"💸 חסכון: {row['Discount']}%"
     rating_line = f"⭐ דירוג: {row['Rating']}%"
-    orders_line = f"📦 {row['Orders']} הזמנות" if int(row['Orders']) >= 50 else "🆕 פריט חדש לחברי הערוץ"
+    orders_line = f"📦 {row['Orders']} הזמנות" if int(float(row['Orders'])) >= 50 else "🆕 פריט חדש לחברי הערוץ"
     shipping_line = "🚚 משלוח חינם בהזמנות מעל 38 ₪ או 7.49 ₪ בלבד"
 
     coupon_code = row.get('CouponCode', '').strip()
     coupon_line = f"🎁 קופון לחברי הערוץ בלבד: {coupon_code}" if coupon_code else ""
 
     order_link_line = f"להזמנה מהירה לחצו כאן👉 [{row['BuyLink']}]"
-    item_number_line = f"מספר פריט: {row['ItemNumber']}"
+    item_number_line = f"מספר פריט: {str(row['ItemNumber']).replace('.0', '')}"
     join_channel_line = "להצטרפות לערוץ לחצו עליי👉 https://t.me/+LCv-Xuy6z9RjY2I0"
     disclaimer_line = "כל המחירים והמבצעים תקפים למועד הפרסום ועשויים להשתנות."
 
@@ -69,7 +69,7 @@ def send_post_to_channel(row):
                 caption=text,
                 parse_mode=ParseMode.MARKDOWN
             )
-            print(f"🎥 וידאו נשלח: {row['ItemNumber']}")
+            print(f"🎥 וידאו נשלח: {str(row['ItemNumber']).replace('.0', '')}")
         elif image_url:
             bot.send_photo(
                 chat_id=CHANNEL_ID,
@@ -77,11 +77,11 @@ def send_post_to_channel(row):
                 caption=text,
                 parse_mode=ParseMode.MARKDOWN
             )
-            print(f"🖼️ תמונה נשלחה: {row['ItemNumber']}")
+            print(f"🖼️ תמונה נשלחה: {str(row['ItemNumber']).replace('.0', '')}")
         else:
-            print(f"⚠️ אין מדיה לפריט: {row['ItemNumber']}")
+            print(f"⚠️ אין מדיה לפריט: {str(row['ItemNumber']).replace('.0', '')}")
     except Exception as e:
-        print(f"❌ שגיאה בשליחת הפוסט {row['ItemNumber']}: {e}")
+        print(f"❌ שגיאה בשליחת הפוסט {str(row['ItemNumber']).replace('.0', '')}: {e}")
 
 # 📅 תזמון שליחה כל 20 דקות
 def run_scheduled_posts():
