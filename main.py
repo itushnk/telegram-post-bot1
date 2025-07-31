@@ -1,7 +1,7 @@
-
 import csv
 import time
-from telegram import Bot, ParseMode
+from telegram import Bot
+from telegram.constants import ParseMode
 import schedule
 
 BOT_TOKEN = '8371104768:AAE8GYjVBeF0H4fqOur9tMLe4_D4laCBRsk'
@@ -17,8 +17,8 @@ def generate_post_text(row):
     feature_3 = "🎨 מתאים לבית, עבודה או מתנה מושלמת"
 
     sale_price = row['SalePrice']
-    buy_link = row['BuyLink']
     original_price = row['OriginalPrice']
+    buy_link = row['BuyLink']
 
     price_line = f"מחיר מבצע: [{sale_price} ש"ח]({buy_link}) (מחיר מקורי: {original_price} ש"ח)"
     discount_line = f"💸 חסכון: {row['Discount']}%"
@@ -34,26 +34,41 @@ def generate_post_text(row):
     join_channel_line = "להצטרפות לערוץ לחצו עליי👉 https://t.me/+LCv-Xuy6z9RjY2I0"
     disclaimer_line = "כל המחירים והמבצעים תקפים למועד הפרסום ועשויים להשתנות."
 
-    post_text = f"""{call_to_action}
+    post_text = (
+        f"{call_to_action}
 
-{description}
+"
+        f"{description}
 
-{feature_1}
-{feature_2}
-{feature_3}
+"
+        f"{feature_1}
+"
+        f"{feature_2}
+"
+        f"{feature_3}
 
-{price_line}
-{discount_line}
-{rating_line}
-{orders_line}
-{shipping_line}
-{coupon_line}
+"
+        f"{price_line}
+"
+        f"{discount_line}
+"
+        f"{rating_line}
+"
+        f"{orders_line}
+"
+        f"{shipping_line}
+"
+        f"{coupon_line}
 
-{order_link_line}
-{item_number_line}
-{join_channel_line}
-{disclaimer_line}
-"""
+"
+        f"{order_link_line}
+"
+        f"{item_number_line}
+"
+        f"{join_channel_line}
+"
+        f"{disclaimer_line}"
+    )
     return post_text
 
 def send_post_to_channel(row):
@@ -90,7 +105,6 @@ def run_scheduled_posts():
         rows = list(reader)
 
     for i, row in enumerate(rows):
-        row['ItemNumber'] = str(row['ItemNumber']).replace('.0', '')
         schedule.every(POST_INTERVAL_MINUTES * i).minutes.do(send_post_to_channel, row=row)
 
     while True:
